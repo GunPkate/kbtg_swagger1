@@ -1,5 +1,6 @@
 package com.example.swagger.controller;
 
+import com.example.swagger.service.UserService;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,14 +32,18 @@ public class UserController {
              )
         );
         // List of is inmutable
-        @GetMapping("/api/users/{active}")
+
+        private final UserService userService;
+
+        public UserController(UserService userService) {
+            this.userService = userService;
+        }//Constructor
+
+    @GetMapping("/api/users/{active}")
 
         public List<User> getUsers(@PathVariable("active") Optional<Boolean> active){
-          if(active.isPresent()){
-              return users.stream().filter(u->u.getActive() == active.get()).toList();
-          }
-          return users;
-        }
+        return this.userService.getUsers(active);
+    }
 
         @PostMapping("/api/users")
         public User createUser(@RequestBody UserRequest request){
@@ -68,47 +73,3 @@ public class UserController {
 }
 
 record UserRequest(String name, int age ) {}
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-class User {
-    private int id;
-    private String name;
-    private int age;
-    private Boolean active;
-
-    public User (int id,String name,int age, Boolean active){
-        this.id = id;
-        this.age = age;
-        this.name = name;
-        this.active = active;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-}
