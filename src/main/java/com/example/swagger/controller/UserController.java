@@ -23,19 +23,20 @@ public class UserController {
 //            return new ResponseEntity<>(id,HttpStatus.CREATED);
 //        }
 
-        List<User> users =
-//             List.of(
-//              new User(1,"A",19,true),
-//              new User(2,"B",22,false),
-//              new User(3,"C",21,true)
-//             );
-                new ArrayList<User>();
-    //              new User(1,"A",19,true),
-//              new User(2,"B",22,false),
-//              new User(3,"C",21,true)
-        @GetMapping("/api/users")
+        List<User> users = new ArrayList<>(
+             List.of(
+              new User(1,"A",19,true),
+              new User(2,"B",22,false),
+              new User(3,"C",21,true)
+             )
+        );
+        // List of is inmutable
+        @GetMapping("/api/users/{active}")
 
-        public List<User> getUsers(){
+        public List<User> getUsers(@PathVariable("active") Optional<Boolean> active){
+          if(active.isPresent()){
+              return users.stream().filter(u->u.getActive() == active.get()).toList();
+          }
           return users;
         }
 
@@ -101,5 +102,13 @@ class User {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }
